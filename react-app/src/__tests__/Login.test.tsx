@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import Login from "./Login";
+import Login from "../pages/Login";
 
 describe("Login", () => {
   it("user can login with name and password", async () => {
