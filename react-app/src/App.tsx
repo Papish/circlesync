@@ -1,5 +1,11 @@
+import Login from "./components/Login";
+
 function App() {
-  return <>Hello React!</>;
+  return (
+    <>
+      <Login />
+    </>
+  );
 }
 
 export default App;
