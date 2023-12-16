@@ -7,18 +7,17 @@ describe("Login", () => {
   const mount = () => {
     render(<Login />);
 
-    // selectors
-    const usernameEl = screen.getByLabelText("Username");
+    const emailEl = screen.getByLabelText("Email");
     const passwordEl = screen.getByLabelText("Password");
     const loginBtnEl = screen.getByRole("button");
 
-    return { usernameEl, passwordEl, loginBtnEl };
+    return { emailEl, passwordEl, loginBtnEl };
   };
 
   it("user can submit", async () => {
-    const { usernameEl, passwordEl, loginBtnEl } = mount();
+    const { emailEl, passwordEl, loginBtnEl } = mount();
 
-    await user.type(usernameEl, "test");
+    await user.type(emailEl, "test@test.com");
     await user.type(passwordEl, "password");
 
     await user.click(loginBtnEl);
@@ -26,16 +25,16 @@ describe("Login", () => {
     expect(screen.getByText("success")).toBeInTheDocument();
   });
 
-  it("form validation", async () => {
+  it("email and password are required", async () => {
     const { loginBtnEl } = mount();
 
     await user.click(loginBtnEl);
 
-    expect(screen.getByText("Username is required")).toBeInTheDocument();
+    expect(screen.getByText("Email is required")).toBeInTheDocument();
     expect(screen.getByText("Password is required")).toBeInTheDocument();
   });
 
-  it("password min length", async () => {
+  it("password min length should be 6", async () => {
     const { passwordEl, loginBtnEl } = mount();
 
     await user.type(passwordEl, "pass");

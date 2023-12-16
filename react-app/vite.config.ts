@@ -9,8 +9,9 @@ export default defineConfig({
   plugins: [react()],
   // base: process.env.NODE_ENV === "production" ? "/circlesync" : "'",
   test: {
+    css: false,
     globals: true,
-    environment: "jsdom",
+    environment: "happy-dom",
     setupFiles: ["src/setupTest.ts"],
   },
 });

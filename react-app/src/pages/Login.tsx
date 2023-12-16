@@ -4,12 +4,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 interface IForm {
-  username: string;
+  email: string;
   password: string;
 }
 
 const schema = yup.object({
-  username: yup.string().required(),
+  email: yup.string().required(),
   password: yup.string().required().min(6),
 });
 
@@ -34,10 +34,10 @@ export default function Login() {
       <h1>Login Form</h1>
       <h3>{message}</h3>
       <div>
-        <label htmlFor="login-user">Username</label>
-        <input type="text" id="login-user" {...register("username")} />
-        {errors.username?.type === "required" && (
-          <p role="alert">Username is required</p>
+        <label htmlFor="login-user">Email</label>
+        <input type="text" id="login-user" {...register("email")} />
+        {errors.email?.type === "required" && (
+          <p role="alert">Email is required</p>
         )}
       </div>
 
