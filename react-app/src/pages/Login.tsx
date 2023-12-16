@@ -1,38 +1,55 @@
 import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+interface IForm {
+  username: string;
+  password: string;
+}
+
+const schema = yup.object({
+  username: yup.string().required(),
+  password: yup.string().required().min(6),
+});
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>({
+    resolver: yupResolver(schema),
+  });
 
   const [message, setMessage] = useState("");
 
-  function validate(e: React.FormEvent) {
-    e.preventDefault();
-    if (username === "test" && password === "test") {
-      setMessage("success");
-    }
-  }
+  const onSubmit: SubmitHandler<IForm> = (data) => {
+    console.log(data);
+    setMessage("success");
+  };
 
   return (
-    <form noValidate onSubmit={(e) => validate(e)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <h1>Login Form</h1>
       <h3>{message}</h3>
       <div>
         <label htmlFor="login-user">Username</label>
-        <input
-          type="text"
-          id="login-user"
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        <input type="text" id="login-user" {...register("username")} />
+        {errors.username?.type === "required" && (
+          <p role="alert">Username is required</p>
+        )}
       </div>
 
       <div>
         <label htmlFor="login-password">Password</label>
-        <input
-          type="text"
-          id="login-password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <input type="text" id="login-password" {...register("password")} />
+        {errors.password?.type === "required" && (
+          <p role="alert">Password is required</p>
+        )}
+        {errors.password?.type === "min" && (
+          <p role="alert">Password min length 6</p>
+        )}
       </div>
 
       <button type="submit" role="button">
