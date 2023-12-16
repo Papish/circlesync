@@ -1,74 +1,46 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import Login from "../pages/Login";
+import user from "@testing-library/user-event";
 
 describe("Login", () => {
-  it("user can submit with name and password", async () => {
+  const mount = () => {
     render(<Login />);
-    screen.getByText("Login Form");
 
-    // arrange
-    const nameField = screen.getByLabelText("Username");
-    const passwordField = screen.getByLabelText("Password");
+    // selectors
+    const usernameEl = screen.getByLabelText("Username");
+    const passwordEl = screen.getByLabelText("Password");
+    const loginBtnEl = screen.getByRole("button");
 
-    // act
-    await fireEvent.change(nameField, {
-      target: {
-        value: "username",
-      },
-    });
+    return { usernameEl, passwordEl, loginBtnEl };
+  };
 
-    await fireEvent.change(passwordField, {
-      target: {
-        value: "password",
-      },
-    });
+  it("user can submit", async () => {
+    const { usernameEl, passwordEl, loginBtnEl } = mount();
 
-    await fireEvent.click(screen.getByRole("button"));
+    await user.type(usernameEl, "test");
+    await user.type(passwordEl, "password");
 
-    // assert
-    await waitFor(async () => {
-      expect(screen.getByText("success")).toBeInTheDocument();
-    });
+    await user.click(loginBtnEl);
+
+    expect(screen.getByText("success")).toBeInTheDocument();
   });
 
   it("form validation", async () => {
-    render(<Login />);
-    screen.getByText("Login Form");
+    const { loginBtnEl } = mount();
 
-    // arrange
-    const nameField = screen.getByLabelText("Username");
-    const passwordField = screen.getByLabelText("Password");
+    await user.click(loginBtnEl);
 
-    // act
-    await fireEvent.change(nameField, {
-      target: {
-        value: "",
-      },
-    });
+    expect(screen.getByText("Username is required")).toBeInTheDocument();
+    expect(screen.getByText("Password is required")).toBeInTheDocument();
+  });
 
-    await fireEvent.change(passwordField, {
-      target: {
-        value: "",
-      },
-    });
+  it("password min length", async () => {
+    const { passwordEl, loginBtnEl } = mount();
 
-    await fireEvent.click(screen.getByRole("button"));
+    await user.type(passwordEl, "pass");
+    await user.click(loginBtnEl);
 
-    // assert
-    await waitFor(async () => {
-      expect(screen.getByText("Username is required")).toBeInTheDocument();
-      expect(screen.getByText("Password is required")).toBeInTheDocument();
-    });
-
-    await fireEvent.change(passwordField, {
-      target: {
-        value: "test",
-      },
-    });
-
-    await waitFor(async () => {
-      expect(screen.getByText("Password min length 6")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Password min length 6")).toBeInTheDocument();
   });
 });
