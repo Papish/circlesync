@@ -3,31 +3,46 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AppButton from "../components/UI/AppButton/AppButton";
+import { loginWithEmailPassword } from '../api/auth';
+import { useDispatch} from 'react-redux'
+import { login } from "../store/auth";
 
 interface IForm {
   email: string;
   password: string;
 }
 
-const schema = yup.object({
+const loginSchema = yup.object({
   email: yup.string().required(),
   password: yup.string().required().min(6),
 });
 
 export default function Login() {
+  const dispatch = useDispatch();
+ 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IForm>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: 'test@test.com',
+      password: 'password123'
+    }
   });
 
   const [message, setMessage] = useState("");
 
-  const onSubmit: SubmitHandler<IForm> = (data) => {
-    console.log(data);
-    setMessage("success");
+  const onSubmit: SubmitHandler<IForm> = async (data) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res : any = await loginWithEmailPassword(data.email, data.password)
+    if (res.status === 200) {
+      console.log(res)
+      dispatch(login(res))
+      setMessage("success");
+    }
+
   };
 
   return (
